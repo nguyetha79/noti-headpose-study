@@ -27,11 +27,11 @@ mp_drawing = mp.solutions.drawing_utils
 drawing_spec = mp_drawing.DrawingSpec(color=(128, 0, 128), thickness=2, circle_radius=1)
 
 # Initialize Video Capture
-#cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 
 # Replace video capture from webcam with video file reading
-video_file = 'video.mp4'
-cap = cv2.VideoCapture(video_file)
+# video_file = 'video.mp4'
+# cap = cv2.VideoCapture(video_file)
 
 # Get frame width and height
 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
