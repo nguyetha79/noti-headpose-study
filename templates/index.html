@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Head Pose Estimation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,800&display=swap"
+          rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Poppins";
+        }
+        #video-container {
+            position: relative;
+            margin: 0 auto;
+        }
+        #video {
+            width: 100%;
+            border: 1px solid black;
+        }
+        .btn-margin {
+            margin: 5px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h1 class="text-center mb-3">Head Pose Estimation</h1>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div id="video-container">
+                <img id="video" src="{{ url_for('video_feed') }}" alt="Live Feed" class="img-fluid" onerror="this.src='{{ url_for('static', filename='default_image.jpg') }}';">
+
+            </div>
+            <div class="text-center mt-3">
+                <form action="/" method="post" class="mb-3">
+                    <input type="text" name="user_id" placeholder="Enter User ID" required class="form-control mb-2">
+                    <button type="submit" name="action" value="Start Webcam" class="btn btn-primary btn-margin">Start
+                        Webcam
+                    </button>
+                </form>
+                <button onclick="stopWebcam()" class="btn btn-danger btn-margin">Stop Webcam</button>
+
+                {% if user_id %}
+                    <div class="d-flex my-4 align-items-center">
+                        <h3>Download Data</h3>
+                        <button class="btn btn-success mx-4">
+                            <a href="{{ url_for('download_csv_zip', user_id=user_id) }}" class="text-light" >Download All Data as ZIP</a>
+                        </button>
+
+                    </div>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+        function stopWebcam() {
+            fetch('/stop').then(response => response.text()).then(data => {
+                alert(data);
+                document.getElementById('video').src = '';
+            });
+        }
+
+
+
+</script>
+</body>
+</html>
