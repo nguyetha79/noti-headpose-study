@@ -338,6 +338,7 @@ def video_feed():
             return Response(open(default_image_path, 'rb').read(), mimetype='image/jpeg')
         return "Default image not found.", 404
 
+
 @app.route('/download_pose_timestamps/<user_id>')
 def download_pose_timestamps(user_id):
     file_path = os.path.join(user_id, f'Participant_{user_id}_pose_timestamps.csv')
@@ -353,25 +354,36 @@ def download_pose_counts(user_id):
         return send_file(file_path, as_attachment=True)
     return "File not found.", 404
 
+
 @app.route('/download_csv_zip/<user_id>')
 def download_csv_zip(user_id):
     zip_file_path = os.path.join(user_id, f'Participant_{user_id}_data.zip')
 
+    output_dir = os.path.join(os.getcwd(), user_id)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     # Create a ZIP file
     with zipfile.ZipFile(zip_file_path, 'w') as zipf:
-        pose_timestamps_file = os.path.join(user_id, f'Participant_{user_id}_pose_timestamps.csv')
-        pose_counts_file = os.path.join(user_id, f'Participant_{user_id}_pose_counts.csv')
+        pose_timestamps_file = os.path.join(output_dir, f'Participant_{user_id}_pose_timestamps.csv')
+        pose_counts_file = os.path.join(output_dir, f'Participant_{user_id}_pose_counts.csv')
+        video_file = os.path.join(output_dir, f'Participant_{user_id}_output.avi')
 
-        # Add files to the ZIP file
+        # Add CSV files to the ZIP file
         if os.path.exists(pose_timestamps_file):
             zipf.write(pose_timestamps_file, os.path.basename(pose_timestamps_file))
         if os.path.exists(pose_counts_file):
             zipf.write(pose_counts_file, os.path.basename(pose_counts_file))
 
+        # Add video file to the ZIP file
+        if os.path.exists(video_file):
+            zipf.write(video_file, os.path.basename(video_file))
+
     # Return the ZIP file as a response
     if os.path.exists(zip_file_path):
         return send_file(zip_file_path, as_attachment=True)
     return "File not found.", 404
+
 
 @app.route('/stop')
 def stop():
@@ -388,19 +400,7 @@ def stop():
         save_pose_timestamps_data(user_id)
         save_pose_count_data(user_id)
 
-        # Create and save ZIP file
-        zip_file_path = os.path.join(user_id, f'Participant_{user_id}_data.zip')
-        with zipfile.ZipFile(zip_file_path, 'w') as zipf:
-            pose_timestamps_file = os.path.join(user_id, f'Participant_{user_id}_pose_timestamps.csv')
-            pose_counts_file = os.path.join(user_id, f'Participant_{user_id}_pose_counts.csv')
-
-            if os.path.exists(pose_timestamps_file):
-                zipf.write(pose_timestamps_file, os.path.basename(pose_timestamps_file))
-            if os.path.exists(pose_counts_file):
-                zipf.write(pose_counts_file, os.path.basename(pose_counts_file))
-
     return 'Stopped webcam and tracking.'
-
 
 
 def save_pose_timestamps_data(user_id):
