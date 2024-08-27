@@ -256,7 +256,7 @@ def generate_frames():
                     text = "Looking Right"
                 elif x_angle > 10:
                     text = "Looking Up"
-                elif x_angle < -10:
+                elif x_angle < -7:
                     text = "Looking Down"
                 else:
                     text = "Forward"
@@ -312,8 +312,16 @@ def index():
                 output_dir = os.path.join(os.getcwd(), user_id)
                 os.makedirs(output_dir, exist_ok=True)
 
+                for i in range(10):  # Assuming you have up to 10 devices
+                    cap = cv2.VideoCapture(i)
+                    if cap.isOpened():
+                        print(f"Camera index {i} is available.")
+                        cap.release()
+                    else:
+                        print(f"Camera index {i} is not available.")
+
                 # Initialize Video Capture and VideoWriter
-                cap = cv2.VideoCapture(0)
+                cap = cv2.VideoCapture(1)
                 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                 frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
                 fourcc = cv2.VideoWriter_fourcc(*'XVID')
